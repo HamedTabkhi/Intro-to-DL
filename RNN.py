@@ -24,7 +24,13 @@ class RNNModel(nn.Module):
         self.fc = nn.Linear(hidden_size, output_size)  # Linear layer for output
 
     def forward(self, x):
+        #The RNN layer returns two outputs: 
+        #1- the output tensor containing the output of the RNN at each time step for each sequence in the batch, 
+        #2-the hidden state (_) of the last time step (which is not used in this line, hence the underscore).
         out, _ = self.rnn(x)  # Process input through RNN
+        #The RNN's output contains the outputs for every time step, 
+        #but for this task, we're only interested in the output of the last time step because we're predicting the next character after the sequence. 
+        #output[:, -1, :] selects the last time step's output for every sequence in the batch (-1 indexes the last item in Python).
         out = self.fc(out[:, -1, :])  # Pass the last time step output to linear layer
         return out
 
@@ -52,7 +58,7 @@ seq_length = 50  # Length of the sequence of data points considered for predicti
 train_data = create_inout_sequences(data, seq_length)
 
 # Training loop
-epochs = 40
+epochs = 100
 for epoch in range(epochs):
     for seq, labels in train_data:
         optimizer.zero_grad()
